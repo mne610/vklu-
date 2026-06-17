@@ -47,7 +47,10 @@
   };
   function init(){
     var b = document.querySelectorAll(".toggle-theme");
-    for(var i=0;i<b.length;i++){ b[i].addEventListener("click", window.toggleTheme); }
+    for(var i=0;i<b.length;i++){
+      b[i].addEventListener("click", window.toggleTheme);
+      b[i].addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); window.toggleTheme(); } });
+    }
     apply(current());
   }
   if(document.readyState !== "loading"){ init(); } else { document.addEventListener("DOMContentLoaded", init); }

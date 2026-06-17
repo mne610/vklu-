@@ -71,8 +71,8 @@ a{color:inherit}
   font-family:var(--font-display);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#3a382f}
 .masthead{text-align:center;position:relative;padding:6px 0 2px}
 .masthead__name{font-family:var(--font-name);font-weight:900;line-height:.9;display:flex;
-  align-items:center;justify-content:center;gap:.1em;font-size:clamp(38px,7.4vw,82px);letter-spacing:.05em}
-.masthead__toggle{height:.5em;width:auto;flex:none}
+  align-items:baseline;justify-content:center;gap:.02em;font-size:clamp(38px,7.4vw,82px);letter-spacing:.05em}
+.masthead__toggle{width:1.26em;height:.84em;flex:none;transform:translateY(.04em)}
 .masthead__sub{font-family:var(--font-display);font-size:13px;letter-spacing:.34em;
   text-transform:uppercase;margin-top:8px;color:#2a281f}
 .masthead .seal{position:absolute;right:4px;top:10px;width:54px;height:54px;font-size:22px}
@@ -271,16 +271,13 @@ a{color:inherit}
 .hero--has-photo:hover i{opacity:0;transform:scale(.96)}
 
 /* ===== logo toggle = day / night-edition switch ===== */
-.toggle-theme{background:none;border:0;padding:0;margin:0;cursor:pointer;display:inline-flex;align-items:center;line-height:0;color:inherit}
+.toggle-theme{position:relative;display:inline-block;box-sizing:border-box;width:1.5em;height:.82em;border:.085em solid currentColor;border-radius:.5em;background:transparent;cursor:pointer;flex:none;vertical-align:-.04em;transition:background .28s ease}
 .toggle-theme:hover{opacity:.75}
 .toggle-theme:focus-visible{outline:2px solid var(--hair);outline-offset:3px;border-radius:22px}
-.runhead__brand{display:inline-flex;align-items:center;gap:12px}
-.toggle-theme--sm{font-size:0}
-.toggle-theme--sm .masthead__toggle{height:20px}
-.tg-knob{transition:transform .28s cubic-bezier(.4,0,.2,1)}
-.tg-track{transition:fill .28s,fill-opacity .28s}
-[data-theme="dark"] .tg-knob{transform:translateX(37px)}
-[data-theme="dark"] .tg-track{fill:currentColor;fill-opacity:.16}
+.runhead__brand{display:inline-flex;align-items:baseline;gap:3px;font-size:28px}
+.tg-knob{position:absolute;top:50%;left:.12em;width:.5em;height:.5em;border-radius:50%;background:currentColor;transform:translateY(-50%);transition:left .28s cubic-bezier(.4,0,.2,1),background .28s ease}
+[data-theme="dark"] .toggle-theme{background:currentColor}
+[data-theme="dark"] .tg-knob{left:calc(100% - .5em - .12em);background:var(--paper)}
 
 /* ===== dark "night edition" ===== */
 [data-theme="dark"]{
@@ -306,3 +303,27 @@ a{color:inherit}
   background:radial-gradient(circle,rgba(255,255,255,.07),rgba(255,255,255,.03) 42%,transparent 64%);
   mix-blend-mode:screen;
 }
+
+/* whole gadget "article" is clickable; its title reacts on hover */
+[data-href]{cursor:pointer}
+.ad__name,.brief__head,.lead__head{transition:color .2s ease}
+.ad:hover .ad__name,
+.brief:hover .brief__head,
+#lead:hover .lead__head{text-decoration:underline;text-underline-offset:3px}
+.ad:hover .ad__name::after,
+.brief:hover .brief__head::after,
+#lead:hover .lead__head::after{content:" \2192";white-space:nowrap}
+#lead:hover .lead__head{color:var(--accent,var(--ink))}
+
+/* hover on a product render → it slowly turns 360° "in the air" (turntable);
+   spin lives on the <img>, parallax stays on .hero__photo, so they don't clash */
+.hero__photo{perspective:1100px}
+@keyframes ringo-spin{to{transform:rotateY(1turn)}}
+.hero--has-photo:hover .hero__photo img{animation:ringo-spin 3.6s linear infinite}
+@media (prefers-reduced-motion:reduce){.hero--has-photo:hover .hero__photo img{animation:none}}
+
+/* 3D model-viewer fills the hero; drag to orbit */
+.hero__photo model-viewer{width:100%;height:100%;background:transparent;--poster-color:transparent}
+.hero--3d{cursor:grab}
+.hero--3d:active{cursor:grabbing}
+.hero__cap a{color:var(--muted);text-decoration:underline}

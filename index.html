@@ -15,14 +15,14 @@
 <div class="wrap">
 
   <div class="topline">
-    <span>Vol. I · No. 0613</span>
-    <span>Вторник, 13 июня 2026 · 令和8年</span>
+    <span>Vol. I · No. <span id="issue-no">0613</span></span>
+    <span id="dateline">Вторник, 13 июня 2026 · 令和8年</span>
     <span>Monochrome Edition · $0</span>
   </div>
   <hr class="rule">
 
   <header class="masthead">
-    <div class="masthead__name">ВКЛЮЧЕНО<button type="button" class="toggle-theme" aria-pressed="false" aria-label="Тёмная тема" title="Тёмная тема — щёлкни тумблер"><svg class="masthead__toggle" viewBox="0 0 88 44" aria-hidden="true"><rect class="tg-track" x="3" y="3" width="82" height="38" rx="19" fill="none" stroke="currentColor" stroke-width="5"/><circle class="tg-knob" cx="25" cy="22" r="12" fill="currentColor"/></svg></button></div>
+    <div class="masthead__name">ВКЛЮЧЕН<span class="toggle-theme" role="button" tabindex="0" aria-pressed="false" aria-label="Тёмная тема — переключить"><span class="tg-knob"></span></span></div>
     <span class="seal" style="font-size:26px">入</span>
     <div class="masthead__sub">オン · the world in black &amp; white</div>
   </header>
@@ -63,7 +63,7 @@
   <footer class="colophon">
     <span class="jp">印刷 · отпечатано в чёрно-белом</span>
     <span>Политика · Экономика · Техника · Культура · Объявления</span>
-    <span>© 2026 ВКЛЮЧЕНО · стр. 1</span>
+    <span>© <span id="year">2026</span> ВКЛЮЧЕНО · стр. 1</span>
   </footer>
 
 </div>
@@ -91,7 +91,7 @@
   var briefIds = ["airpods-pro-2","apple-watch-series-10","macbook-air-m4"];
   document.getElementById("briefs").innerHTML = briefIds.map(function(id){
     var p = byId(id);
-    return '<div class="brief" style="--accent:' + p.accent + '"><div class="kicker"><span class="jp">' + p.kJP + '</span> ' + p.kEN + '</div>' +
+    return '<div class="brief" data-href="product.html?id=' + p.id + '" style="--accent:' + p.accent + '"><div class="kicker"><span class="jp">' + p.kJP + '</span> ' + p.kEN + '</div>' +
       '<div class="brief__row"><i class="ti ' + p.icon + '"></i><div>' +
       '<a class="headline brief__head" style="text-decoration:none" href="product.html?id=' + p.id + '">' + p.name + '</a>' +
       '<div class="brief__cap">' + p.dek + '</div></div></div>' +
@@ -100,12 +100,55 @@
   }).join("");
 
   document.getElementById("catalogue").innerHTML = window.CATALOG.map(function(p){
-    return '<div class="ad" style="--accent:' + p.accent + '"><div class="ad__top"><i class="ti ' + p.icon + '"></i>' +
+    return '<div class="ad" data-href="product.html?id=' + p.id + '" style="--accent:' + p.accent + '"><div class="ad__top"><i class="ti ' + p.icon + '"></i>' +
       '<a class="ad__name" href="product.html?id=' + p.id + '">' + p.name + '</a></div>' +
       '<div class="ad__cap">' + p.dek + '</div>' +
       '<div class="ad__foot"><span class="price">' + fmt(p.price) + '</span>' +
       '<button class="btn btn--sm" onclick="addToBasket(\'' + p.id + '\',this)">Заказать</button></div></div>';
   }).join("");
+
+  var leadEl = document.getElementById("lead");
+  leadEl.setAttribute("data-href", "product.html?id=" + lead.id);
+  leadEl.style.setProperty("--accent", lead.accent);
+
+  document.addEventListener("click", function(e){
+    if(e.target.closest("a, button")) return;
+    var card = e.target.closest("[data-href]");
+    if(card){ window.location.href = card.getAttribute("data-href"); }
+  });
+
+  (function(){
+    /* Japanese eras (nengō). To add a future era, prepend {name, start}. */
+    var eras = [
+      {name:"令和", start:new Date(2019,4,1)},
+      {name:"平成", start:new Date(1989,0,8)},
+      {name:"昭和", start:new Date(1926,11,25)},
+      {name:"大正", start:new Date(1912,6,30)},
+      {name:"明治", start:new Date(1868,8,8)}
+    ];
+    function jpEra(d){
+      for(var i=0;i<eras.length;i++){
+        if(d >= eras[i].start){
+          var y = d.getFullYear() - eras[i].start.getFullYear() + 1;
+          return eras[i].name + (y === 1 ? "元" : y) + "年";
+        }
+      }
+      return d.getFullYear() + "年";
+    }
+    function pad(n){ return ("0" + n).slice(-2); }
+    function tick(){
+      var now = new Date();
+      var dl = now.toLocaleDateString("ru-RU", {weekday:"long", day:"numeric", month:"long", year:"numeric"}).replace(/\s*г\.?$/, "");
+      var elD = document.getElementById("dateline");
+      if(elD) elD.textContent = dl + " · " + jpEra(now) + " · " + pad(now.getHours()) + ":" + pad(now.getMinutes());
+      var elN = document.getElementById("issue-no");
+      if(elN) elN.textContent = pad(now.getMonth() + 1) + pad(now.getDate());
+      var elY = document.getElementById("year");
+      if(elY) elY.textContent = now.getFullYear();
+    }
+    tick();
+    setInterval(tick, 30000);
+  })();
 })();
 </script>
 </body>
